@@ -2,34 +2,34 @@ import hashlib
 import datetime
 import linecache
 import glob
-import crear
+import mysql.connector
 
+connection = mysql.connector.connect(   host='localhost',
+                                        database='blockchain',
+                                        user='Joaquin-PC\Joaquin',
+                                        port=3306)
+cursor = connection.cursor()
 
+def validar_bloque():
+    hash_file =encrypt_documento('test.pdf')
+    sql = r"SELECT * FROM block WHERE hash_file='" + hash_file + "';"
+    print(sql)
+    cursor.execute(sql)
+    if (cursor.rowcount > 0):
+        print("archivo no alterado!")
+    else:
+        print("archivo alterado!")
 
+def encrypt_documento(archivopdf):
+    BLOCKSIZE = 65536
+    hasher = hashlib.sha256()
+    with open(archivopdf, 'rb') as afile:
+        buf = afile.read(BLOCKSIZE)
+        while len(buf) > 0:
+            hasher.update(buf)
+            buf = afile.read(BLOCKSIZE)
+    return hasher.hexdigest()
 
-def validar_bloque(n):
-    fecha_ant = linecache.getline(archtxtmenos, 4)
-    doc_ant = linecache.getline(archtxtmenos, 6)
-    block_ant = linecache.getline(archtxtmenos, 8)
-    block = linecache.getline(archtxtmenos, 10)
-    block2 = block.strip()
-    txt_anterior = fecha_ant + doc_ant + block_ant
-    txt_ant_hash = crear.encrypt_string(txt_anterior)
-    if (block2 != txt_ant_hash):
-        return txt_anterior
-    return n
-
-
-if __name__ == "__main__":
-    print('Validando blocks...')
-    n=2
-    myPath = 'C:/Users/panch/Desktop/block'
-    counter = len(glob.glob1(myPath,"*.txt"))
-    while (n <= counter):
-        archtxtmenos = "block" + str(n) + ".txt"
-        if (n != validar_bloque(n)):
-            print("ERROR AL VALIDAR BLOCK" + str(n))
-        else:
-            print("BLOCK" + str(n) + " ESTA INTEGRO")
-        n=n+1
+validar_bloque()
+    
 
